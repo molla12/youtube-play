@@ -4,44 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Makkah Live Player</title>
-    <!-- Font Awesome for Icons -->
     <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css' rel='stylesheet'/>
     <style>
         :root {
-            --mainColor: #39ebbb; /* আপনার কোডের সেই সবুজ রঙ */
-            --radius-5: 10px;
+            --mainColor: #39ebbb; /* আপনার সেই সবুজ রঙ */
         }
-
         body {
-            background-color: #282c35;
+            background-color: #000;
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
         }
-
-        /* প্লেয়ারের মেইন কন্টেইনার */
         .player-block {
-            width: 95%;
-            max-width: 720px;
+            width: 96%;
+            max-width: 650px;
             padding: 10px;
             background-color: var(--mainColor);
-            border-radius: var(--radius-5);
+            border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-
-        /* ভিডিও এরিয়া */
         .video-container {
             position: relative;
             width: 100%;
-            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            padding-top: 56.25%;
             background-color: #000;
-            border-radius: 5px 5px 0 0;
+            border-radius: 8px 8px 0 0;
             overflow: hidden;
         }
-
         .video-container iframe {
             position: absolute;
             top: 0;
@@ -50,63 +42,54 @@
             height: 100%;
             border: 0;
         }
-
-        /* কন্ট্রোল বার (টাইটেল + বাটন) */
         .player-control {
             display: flex;
-            gap: 13px;
             align-items: center;
             justify-content: space-between;
             padding: 15px;
-            background: rgba(0,0,0,0.21);
-            border-radius: 0 0 5px 5px;
-            margin-top: 2px;
+            background: rgba(0,0,0,0.25);
+            border-radius: 0 0 8px 8px;
+            margin-top: 3px;
         }
-
         .player-title {
-            font-size: 1.1rem;
-            font-weight: 600;
             color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             flex: 1;
+            margin-right: 10px;
         }
-
-        /* স্টপ/প্লে বাটন */
         .control-video {
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 8px 20px;
+            padding: 10px 22px;
             background-color: #4dc7a4;
             color: #fff;
             border: none;
             cursor: pointer;
             border-radius: 8px;
-            font-size: 1rem;
             font-weight: bold;
-            transition: 0.3s;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
-
-        .control-video:hover {
-            background-color: #35b08d;
-        }
-
-        .is-playing {
-            background-color: #fa5252; /* স্টপ মোডে লাল রঙ চাইলে এটি ব্যবহার করতে পারেন */
-        }
+        .is-playing { background-color: #ff4747; }
     </style>
 </head>
 <body>
 
 <div class="player-block">
-    <!-- ভিডিও সেকশন -->
-    <div class="video-container">
-        <iframe id="main-player" src="https://www.youtube.com/embed/7-Qf3g-0xEI?autoplay=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    <div class="video-container" id="video-box">
+        <!-- অ্যাপ এবং ইউটিউব সিকিউরিটির জন্য origin প্যারামিটার যুক্ত -->
+        <iframe id="main-player" 
+            src="https://drive.google.com/file/d/1EJcc3jTCzyIYDyxe3mM_rPdmmrwHYfMP/preview" 
+            allow="autoplay; encrypted-media" 
+            allowfullscreen>
+        </iframe>
     </div>
 
-    <!-- টাইটেল এবং বাটন সেকশন -->
     <div class="player-control">
         <span class="player-title">Title: 🕋 Makkah Live TV | مكة المكرمة بث مباشر ...</span>
         <button class="control-video" id="playStopBtn">
@@ -117,27 +100,27 @@
 </div>
 
 <script>
-    const player = document.getElementById('main-player');
+    const videoBox = document.getElementById('video-box');
     const btn = document.getElementById('playStopBtn');
     const btnText = document.getElementById('btn-text');
     const btnIcon = document.getElementById('btn-icon');
     
-    // অরিজিনাল ইউটিউব ইউআরএল
-    const videoSrc = "https://www.youtube.com/embed/7-Qf3g-0xEI?autoplay=1";
+    // অরিজিনাল লিঙ্ক যা অ্যাপে প্লে হবে
+    const videoUrl = "https://drive.google.com/file/d/1EJcc3jTCzyIYDyxe3mM_rPdmmrwHYfMP/preview";
 
     btn.addEventListener('click', function() {
         if (btnText.innerText === "Stop") {
-            // ভিডিও বন্ধ করা (src সরিয়ে ফেলে)
-            player.src = "";
+            videoBox.innerHTML = '<div style="color:white; text-align:center; padding-top:20%; font-weight:bold;">Live Stream Stopped</div>';
             btnText.innerText = "Play";
             btnIcon.className = "fas fa-play-circle";
-            btn.style.backgroundColor = "#204ecf"; // প্লে করার জন্য নীল রঙ
+            btn.classList.add('is-playing');
+            btn.style.backgroundColor = "#204ecf";
         } else {
-            // ভিডিও পুনরায় চালু করা
-            player.src = videoSrc;
+            videoBox.innerHTML = `<iframe id="main-player" src="${videoUrl}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
             btnText.innerText = "Stop";
             btnIcon.className = "fas fa-stop-circle";
-            btn.style.backgroundColor = "#4dc7a4"; // আপনার সবুজ রঙ
+            btn.classList.remove('is-playing');
+            btn.style.backgroundColor = "#4dc7a4";
         }
     });
 </script>
